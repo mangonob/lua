@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": false,
+  "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+  "files.associations": {
+    "assert.h": "c"
+  }
+}
