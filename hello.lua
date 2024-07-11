@@ -1,18 +1,27 @@
-function foo(a)
-    print("foo", a)
-    return coroutine.yield(2 * a)
+function createObserver()
+    local subscribers = {}
+
+    return {
+        subscribe = function(listener)
+            subscribers[#subscribers + 1] = listener
+        end,
+        dispatch = function(e)
+            for _, sub in ipairs(subscribers) do
+                sub(e)
+            end
+        end
+    }
 end
 
-co = coroutine.create(function(a, b)
-    print("co-body", a, b)
-    local r = foo(a + 1)
-    print("co-body", r)
-    local r, s = coroutine.yield(a + b, a - b)
-    print("co-body", r, s)
-    return b, "end"
+local observer = createObserver()
+observer.subscribe(function(e)
+    print("Subscriber 1 receive event " .. e)
 end)
 
-print("1 main", coroutine.resume(co, 1, 10))
-print("2 main", coroutine.resume(co, "r"))
-print("3 main", coroutine.resume(co, "x", "y"))
-print("4 main", coroutine.resume(co, "x", "y"))
+observer.subscribe(function(e)
+    print("Subscriber 2 receive event " .. e)
+end)
+
+observer.dispatch(1)
+observer.dispatch(2)
+observer.dispatch(3)
